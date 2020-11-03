@@ -1,0 +1,12 @@
+//Reset
+* {
+  border: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+//La div contenant la map fait la hauteur de la page
+#map {
+  height: 100vh;
+}
