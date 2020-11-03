@@ -8,5 +8,55 @@
 </head>
 <body>
     <div id="map"></div>
+
+    <div id="rightSide">
+        <h1>Rappel d'événements</h1>
+
+        <div class="new_event">
+            <h2>Nouveau rappel</h2>
+
+            <form action="" id="formEvent">
+                <div class="input">
+                    <label for="eventTitle">Titre</label>
+                    <input type="text" name="event_title" id="eventTitle" placeholder="Journée de repos">
+                </div>
+
+                <div class="input">
+                    <label for="eventDesc">Description</label>
+                    <textarea name="event_desc" id="eventDesc" placeholder="Les enfants sont chez la nounou, pas de travail, je vais regarder netflix toute la journée."></textarea>
+                </div>
+
+                <div class="input">
+                    <label for="eventStart">Date de début</label>
+                    <input type="datetime-local" name="event_start" id="eventStart">
+                </div>
+
+                <!--TODO si checkbox coché enlever date de fin-->
+                <div class="input check">
+                    <input type="checkbox" name="event_all_day" id="eventAllDay">
+                    <label for="eventAllDay"> Journée entière</label>
+                </div>
+
+                <div class="input">
+                    <label for="event_end">Date de fin</label>
+                    <input type="datetime-local" name="event_end" id="eventEnd">
+                </div>
+
+                <div class="input">
+                    <label for="eventLat">Latitude</label>
+                    <input type="number" name="event_lat" id="eventLat" placeholder="47.038165">
+                </div>
+
+                <div class="input">
+                    <label for="eventLng">Longitude</label>
+                    <input type="number" name="event_lng" id="eventLng" placeholder="1.751749">
+                </div>
+
+                <button type="submit">Ajouter</button>
+
+            </form>
+        </div>
+
+    </div>
 </body>
 </html>

@@ -19,7 +19,7 @@ class App {
         console.log( 'Application démarrée' );
 
         //Définition du centre de la carte à afficher
-        const mapCenter = new mapboxgl.LngLat( 2.213749, 47.038165 );
+        const mapCenter = new mapboxgl.LngLat( 1.751749, 47.038165 );
 
         //Instanciation de la carte
         this.map = new mapboxgl.Map({

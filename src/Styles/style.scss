@@ -6,7 +6,85 @@
   padding: 0;
 }
 
-//La div contenant la map fait la hauteur de la page
-#map {
-  height: 100vh;
+textarea {
+  resize: none;
 }
+
+//Application
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+
+body {
+  display: flex;
+  background: #F2F2F2;
+}
+
+
+#map {
+  height: 100vh; //La div contenant la map fait la hauteur de la page
+  flex-basis: 66.66666%;
+}
+
+#rightSide {
+  flex-basis: 33.33333%;
+  padding: 5% 1%;
+
+  .input {
+    display: flex;
+    margin-bottom: 0.5rem;
+
+  }
+
+  .input:not(.check) {
+    justify-content: space-between;
+
+    label {
+      flex-basis: 33.33333%;
+    }
+
+    input,
+    textarea {
+      border-radius: 4px;
+
+      flex-grow: 1;
+    }
+
+    textarea {
+      height: 5rem;
+    }
+  }
+
+  .input.check {
+    justify-content: center;
+  }
+
+  button {
+    border: 1px #005959 solid;
+    border-radius: 4px;
+    box-shadow: black 0 15px 30px -15px;
+    background: #008b8b;
+    color: #F2F2F2;
+    padding: 0.5rem 1rem;
+
+  }
+
+  button:hover {
+    border: 1px #008b8b solid;
+    background: #00bfbf;
+  }
+
+  button:active {
+    border: 1px #00bfbf solid;
+    background: #00f2f2;
+  }
+}
+
