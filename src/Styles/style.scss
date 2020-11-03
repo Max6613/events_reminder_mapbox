@@ -32,6 +32,15 @@ body {
 #map {
   height: 100vh; //La div contenant la map fait la hauteur de la page
   flex-basis: 66.66666%;
+
+  #refreshIcon,
+  .categories_icons {
+    width: 25px;
+  }
+
+  .categories_icons {
+    margin-left: 5px;
+  }
 }
 
 #rightSide {

@@ -2,13 +2,18 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
+const appConfig = require( './app.config.json' );
+
 module.exports = {
     entry: './src/index.js',
     plugins: [
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
-            title: 'Heritage JS Objet',
-            template: 'src/index.ejs'
+            title: 'Rappel D\'événements',
+            template: 'src/index.ejs',
+            templateParameters: {
+                config: appConfig
+            }
         }),
     ],
     output: {

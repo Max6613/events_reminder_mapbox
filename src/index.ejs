@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rappels d'événements</title>
 
+    <link rel="stylesheet" href="<%= config.apis.mapbox_gl.css_url %>">
 </head>
 <body>
     <div id="map"></div>
@@ -18,41 +19,68 @@
             <form action="" id="formEvent">
                 <div class="input">
                     <label for="eventTitle">Titre</label>
-                    <input type="text" name="event_title" id="eventTitle" placeholder="Journée de repos">
+                    <input type="text"
+                           name="event_title"
+                           id="eventTitle"
+                           placeholder="Journée de repos"
+                           required
+                    >
                 </div>
 
                 <div class="input">
                     <label for="eventDesc">Description</label>
-                    <textarea name="event_desc" id="eventDesc" placeholder="Les enfants sont chez la nounou, pas de travail, je vais regarder netflix toute la journée."></textarea>
+                    <textarea name="event_desc"
+                              id="eventDesc"
+                              placeholder="Les enfants sont chez la nounou, pas de travail, je vais regarder netflix toute la journée."></textarea
+                            required
+                    >
                 </div>
 
                 <div class="input">
                     <label for="eventStart">Date de début</label>
-                    <input type="datetime-local" name="event_start" id="eventStart">
+                    <input type="datetime-local"
+                           name="event_start"
+                           id="eventStart"
+                           required
+                    >
                 </div>
 
                 <!--TODO si checkbox coché enlever date de fin-->
                 <div class="input check">
-                    <input type="checkbox" name="event_all_day" id="eventAllDay">
+                    <input type="checkbox"
+                           name="event_all_day"
+                           id="eventAllDay">
                     <label for="eventAllDay"> Journée entière</label>
                 </div>
 
                 <div class="input">
                     <label for="event_end">Date de fin</label>
-                    <input type="datetime-local" name="event_end" id="eventEnd">
+                    <input type="datetime-local"
+                           name="event_end"
+                           id="eventEnd">
                 </div>
 
                 <div class="input">
                     <label for="eventLat">Latitude</label>
-                    <input type="number" name="event_lat" id="eventLat" placeholder="47.038165">
+                    <input type="number"
+                           name="event_lat"
+                           id="eventLat"
+                           placeholder="47.038165"
+                           required
+                    >
                 </div>
 
                 <div class="input">
                     <label for="eventLng">Longitude</label>
-                    <input type="number" name="event_lng" id="eventLng" placeholder="1.751749">
+                    <input type="number"
+                           name="event_lng"
+                           id="eventLng"
+                           placeholder="1.751749"
+                           required
+                    >
                 </div>
 
-                <button type="submit">Ajouter</button>
+                <button type="button">Ajouter</button>
 
             </form>
         </div>
