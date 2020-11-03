@@ -1,0 +1,9 @@
+{
+  "apis": {
+    "mapbox_gl": {
+      "api_key": "pk.eyJ1IjoibWF4NjYxMyIsImEiOiJja2d3ZmJ2Y2kwOXBlMzFycjFjd25uODd6In0.5qBJrhHDip82L4QOM6HcSA",
+      "css_url": "https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css",
+      "map_style": "mapbox://styles/mapbox/streets-v11"
+    }
+  }
+}
