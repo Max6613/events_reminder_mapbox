@@ -41,6 +41,11 @@ body {
   .categories_icons {
     margin-left: 5px;
   }
+
+  .popup_click {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 #rightSide {

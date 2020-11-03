@@ -24,16 +24,19 @@
                            id="eventTitle"
                            placeholder="Journée de repos"
                            required
-                    >
+                           value="Test"
+                    ><!--TODO delete value-->
                 </div>
 
                 <div class="input">
                     <label for="eventDesc">Description</label>
                     <textarea name="event_desc"
                               id="eventDesc"
-                              placeholder="Les enfants sont chez la nounou, pas de travail, je vais regarder netflix toute la journée."></textarea
-                            required
+                              placeholder="Les enfants sont chez la nounou, pas de travail, je vais regarder netflix toute la journée."
+                              required
                     >
+                        Les enfants sont chez la nounou, pas de travail, je vais regarder netflix toute la journée.
+                    </textarea><!--TODO delete value-->
                 </div>
 
                 <div class="input">
@@ -42,14 +45,16 @@
                            name="event_start"
                            id="eventStart"
                            required
-                    >
+                           value="2020-12-24 17:00"
+                    ><!--TODO delete value-->
                 </div>
 
                 <!--TODO si checkbox coché enlever date de fin-->
                 <div class="input check">
                     <input type="checkbox"
                            name="event_all_day"
-                           id="eventAllDay">
+                           id="eventAllDay"
+                    >
                     <label for="eventAllDay"> Journée entière</label>
                 </div>
 
@@ -57,7 +62,9 @@
                     <label for="event_end">Date de fin</label>
                     <input type="datetime-local"
                            name="event_end"
-                           id="eventEnd">
+                           id="eventEnd"
+                           value="2020-12-24 13:00"
+                    ><!--TODO delete value-->
                 </div>
 
                 <div class="input">
@@ -67,7 +74,8 @@
                            id="eventLat"
                            placeholder="47.038165"
                            required
-                    >
+                           value="42.6826202"
+                    ><!--TODO delete value-->
                 </div>
 
                 <div class="input">
@@ -77,7 +85,8 @@
                            id="eventLng"
                            placeholder="1.751749"
                            required
-                    >
+                           value="2.793711"
+                    ><!--TODO delete value-->
                 </div>
 
                 <button type="button">Ajouter</button>
