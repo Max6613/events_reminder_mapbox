@@ -45,6 +45,35 @@ body {
   .popup_click {
     display: flex;
     flex-direction: column;
+
+    .popup_header {
+      margin-bottom: 1rem;
+
+      .popup_alert {
+        text-align: center;
+        color: #ee3c3c;
+      }
+
+      .popup_title {
+        display: flex;
+        justify-content: space-between;
+
+        em {
+          color: #626262;
+        }
+
+      }
+    }
+
+    .popup_desc,
+    .popup_dates {
+      margin-bottom: 0.5rem;
+    }
+
+    .popup_position {
+      display: flex;
+      flex-direction: column;
+    }
   }
 }
 
