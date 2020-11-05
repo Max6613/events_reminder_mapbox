@@ -75,6 +75,32 @@ body {
       flex-direction: column;
     }
   }
+
+  .mapboxgl-marker {
+
+    .popup_hover {
+      background: lightgrey;
+      padding: 0.5rem;
+      position: absolute;
+      left: -100px;
+      top: -100px;
+      width: 200px;
+
+      .popup_title {
+      }
+
+      .popup_dates {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+
+  .mapboxgl-marker:not(:hover) {
+    .popup_hover {
+      display: none;
+    }
+  }
 }
 
 #rightSide {

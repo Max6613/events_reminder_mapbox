@@ -72,6 +72,9 @@
                     <input type="number"
                            name="event_lat"
                            id="eventLat"
+                           min="-90"
+                           max="90"
+                           step="0.0000001"
                            placeholder="47.038165"
                            required
                            value="42.6826202"
@@ -83,13 +86,16 @@
                     <input type="number"
                            name="event_lng"
                            id="eventLng"
+                           min="-180"
+                           max="180"
+                           step="0.0000001"
                            placeholder="1.751749"
                            required
                            value="2.793711"
                     ><!--TODO delete value-->
                 </div>
 
-                <button type="button">Ajouter</button>
+                <button type="submit">Ajouter</button>
 
             </form>
         </div>

@@ -11,26 +11,55 @@ import { FiltersControl } from "./FiltersControl";
 
 
 class App {
+    /**
+     * Localstorage name
+     * @returns {string}
+     */
+    get storageName() { return 'eventsReminder'}
+
+    /**
+     * Mapbox map
+     */
     map;
+
+    /**
+     * Array containing markers
+     * @type {[]}
+     */
     markers = [];
 
+    /**
+     * Class App constructor
+     */
     constructor() {
         mapboxgl.accessToken = config.apis.mapbox_gl.api_key;
     }
 
+    /**
+     * Launch the application
+     */
     start() {
-        console.log('Application démarrée');
-
-        //Définition du centre de la carte à afficher
-        const mapCenter = new mapboxgl.LngLat(1.751749, 47.038165);
-
         //Instanciation de la carte
         this.map = new mapboxgl.Map({
             container: 'map',
             style: config.apis.mapbox_gl.map_style,
-            center: mapCenter,
+            center: [1.751749, 47.038165],
             zoom: 5.6
         });
+
+        //Récupération des données en localstorage
+        const str_data = localStorage.getItem( this.storageName );
+
+        //Si des données existe en localstorage
+        if ( str_data ) {
+            //Création d'un JSON à partir des données récupérés
+            const json_data = JSON.parse( str_data );
+            console.dir(json_data);
+            //Remplissage du tableau de Markers à partir du JSON
+            // for ( let item in json_data ){
+            //     this.markers.push(  );
+            // }
+        }
 
         /* --------------------
         Controles personnalisés
@@ -44,18 +73,28 @@ class App {
         this.map.addControl(filters, 'top-right');
 
 
-        /* -------
-        FORMULAIRE
-        ------- */
-        const form_btn = document.querySelector('#formEvent > button');
-        form_btn.addEventListener('click', this.formHandler.bind( this ) );
+        /* -----------
+        --- Layers ---
+        ----------- */
+        //TODO filtres https://docs.mapbox.com/mapbox-gl-js/example/filter-markers/
+
+
+
+
+        /* ---------
+        --- Form ---
+        --------- */
+        const form_btn = document.querySelector('#formEvent');
+        form_btn.addEventListener('submit', this.formHandler.bind( this ) );
+
     }
 
 
     formHandler( event ) {
+        //Empeche le navigateur d'envoyer la requete et d'actualiser la page
+        event.preventDefault();
 
-
-        const form = document.querySelector( '#formEvent' );
+        const form = event.target;
 
         /* ------------------
         Données du formulaire
@@ -65,7 +104,7 @@ class App {
         const date_start = new Date( form['event_start'].value );
         const date_end = new Date();
 
-        //Si la case "Journée entière" est coché, evenement de 8h00 à 18h00
+        //Si la case "Journée entière" est coché, événement de 8h00 à 18h00
         if ( form['event_all_day'].checked ){
             date_start.setHours( 8 );
             date_start.setMinutes( 0 );
@@ -95,6 +134,7 @@ class App {
         // en fonction du nombre de jours restant avant l'événement
         let color = '#12BC25';
         let alert_msg = '';
+        let layer = 'green'
 
         const days_left = this.numberDaysLeft( date_start );
         //On récupère la partie décimal du nb de jours restants
@@ -105,9 +145,11 @@ class App {
         if ( days_left < 0 ) {
             color = '#f3132c';
             alert_msg = 'Quel dommage, vous avez raté cet événement!';
+            layer = 'red';
         }
         else if ( days_left <= 3 ) {
             color = '#dd9e00';
+            layer = 'orange';
             alert_msg = 'Attention, commence dans ';
             if ( Math.floor(days_left) > 0 ){
                 alert_msg += `${ Math.floor( days_left ) } jours et`
@@ -118,7 +160,8 @@ class App {
         /* ----------
         Objets Mapbox
          ----------*/
-        /*
+
+        /* POPUP AU CLICK
         <div class="popup_click">
             <div class="popup_header">
                 <div class="popup_alert">Message en fonction du nb de jours restant</div>
@@ -141,9 +184,12 @@ class App {
             </div>
         </div>
         */
-//TODO continuer la creation de la popup en suivant le modele HTML
-        //Création d'une popup (pour le click)
-        const popup_click = new mapboxgl.Popup();
+
+        //Création de la popup (pour le click)
+        const popup_click = new mapboxgl.Popup({
+            closeOnMove: true,
+            maxWidth: '300px'
+        });
 
         // Contenu de la popup
         //  alerte
@@ -196,11 +242,13 @@ class App {
 
         //  date de début
         const popup_start = document.createElement( 'span');
-        popup_start.textContent = 'Du ' + this.dateForDisplay( date_start );
+        const date_start_str = this.dateForDisplay( date_start );
+        popup_start.textContent = 'Du ' + date_start_str;
 
         //  date de fin
         const popup_end = document.createElement( 'span');
-        popup_end.textContent = ' au ' + this.dateForDisplay( date_end );
+        const date_end_str = this.dateForDisplay( date_end );
+        popup_end.textContent = ' au ' + date_end_str;
 
         //  dates div
         const popup_dates = document.createElement( 'div' );
@@ -226,16 +274,40 @@ class App {
 
         popup_click.setDOMContent( popup_div_content );
 
+        /* POPUP AU HOVER
+        <div class="popup_hover">
+           <div class="popup_header">
+               <div class="popup_title">
+                   <h4>Titre de la popup</h4>
+                   <em>Dans X jours/heures/minutes</em>
+               </div>
+           </div>
+
+           <div class="popup_dates">
+               <span>Date de début</span>
+               <span>Date de fin</span>
+           </div>
+        </div>
+        */
+        const popup_hover = document.createElement( 'div' );
+        popup_hover.classList.add( 'popup_hover' );
+        popup_hover.append( popup_title_div, popup_dates )
 
         // Ajout d'un Marker
-        let marker = new mapboxgl.Marker( {color: color} );
+        let marker = new mapboxgl.Marker( {color: color, title: popup_title} );
 
         marker
             .setLngLat({lng, lat} )
             .setPopup( popup_click )
             .addTo( this.map );
 
+        const html_marker = marker.getElement();
+        html_marker.title = popup_title.textContent; //TODO delete ??
+        html_marker.append( popup_hover );
+
+        //Ajout du marker dans le tableau de markers
         this.markers.push( marker );
+        this.saveToStorage();
     }
 
     /**
@@ -244,8 +316,23 @@ class App {
      * @returns {string}
      */
     dateForDisplay( date ) {
-        return date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear() + " " +
-            date.getHours() + ":" + date.getMinutes();
+        return this.numberForDisplay( date.getDate(), 2 ) +
+            "-" + this.numberForDisplay( date.getMonth() + 1, 2 ) +
+            "-" + this.numberForDisplay( date.getFullYear(), 4 ) +
+            " " + this.numberForDisplay( date.getHours(), 2 ) +
+            ":" + this.numberForDisplay( date.getMinutes(), 2 );
+    }
+
+    /**
+     * Return a string formatted number, with 'size' digits
+     * @param nb
+     * @param size
+     * @returns {string}
+     */
+    numberForDisplay( nb, size ){
+        nb = nb.toString();
+        while ( nb.length < size ) nb = '0' + nb;
+        return nb;
     }
 
     /**
@@ -265,6 +352,12 @@ class App {
         //      ms ->  s -> min -> h -> j
         return diff / 1000 / 60 / 60 / 24;
         // return Math.floor( diff / 1000 / 60 / 60 / 24 );
+    }
+
+    saveToStorage() {
+        //TODO erreur cyclique
+        // localStorage.setItem( this.storageName, JSON.stringify( this.markers,  ) )
+        // console.dir(this.markers);
     }
 
 }
