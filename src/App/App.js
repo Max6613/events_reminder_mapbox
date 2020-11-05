@@ -72,7 +72,6 @@ class App {
         const filters = new FiltersControl();
         this.map.addControl(filters, 'top-right');
 
-
         /* -----------
         --- Layers ---
         ----------- */
@@ -84,8 +83,46 @@ class App {
         /* ---------
         --- Form ---
         --------- */
-        const form_btn = document.querySelector('#formEvent');
-        form_btn.addEventListener('submit', this.formHandler.bind( this ) );
+        const form = document.querySelector('#formEvent');
+        form.addEventListener('submit', this.formHandler.bind( this ) );
+
+
+        /* -------------------
+        ------ Checkbox ------
+        --- journée entière --
+        ------------------- */
+        const allDayCheck = document.querySelector( '#eventAllDay' );
+        allDayCheck.addEventListener( 'change', function ( event ) {
+
+
+            if (this.checked) {
+                console.log('suppression');
+                const div_end = document.querySelector( '#eventEnd' ).parentNode;
+                form.removeChild( div_end );
+            }
+            else {
+                console.log('ajout');
+                //Input date
+                const inp_end = document.createElement( 'input' );
+                inp_end.type = 'datetime-local';
+                inp_end.name = 'event_end';
+                inp_end.id = 'eventEnd';
+                inp_end.required = true;
+
+                //label
+                const label_end = document.createElement( 'label' );
+                label_end.for = 'eventEnd';
+                label_end.textContent = 'Date de fin';
+
+                //div (input + label)
+                const div_end = document.createElement( 'div' );
+                div_end.classList.add( 'input' );
+                div_end.id = 'dateEnd';
+                div_end.append( label_end, inp_end );
+
+                form.insertBefore( div_end,  document.querySelector( '#latitude' ) );
+            }
+        });
 
     }
 
