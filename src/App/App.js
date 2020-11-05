@@ -8,6 +8,7 @@ import '../Styles/style.scss';
 
 import { UpdateButtonControl } from './UpdateButtonControl';
 import { FiltersControl } from "./FiltersControl";
+import { EventReminder } from "./Models/EventReminder";
 
 
 class App {
@@ -23,10 +24,10 @@ class App {
     map;
 
     /**
-     * Array containing markers
+     * Array containing events to create markers
      * @type {[]}
      */
-    markers = [];
+    events = [];
 
     /**
      * Class App constructor
@@ -47,7 +48,7 @@ class App {
             zoom: 5.6
         });
 
-        //Récupération des données en localstorage
+        //TODO Récupération des données du localstorage
         const str_data = localStorage.getItem( this.storageName );
 
         //Si des données existe en localstorage
@@ -56,9 +57,10 @@ class App {
             const json_data = JSON.parse( str_data );
             console.dir(json_data);
             //Remplissage du tableau de Markers à partir du JSON
-            // for ( let item in json_data ){
-            //     this.markers.push(  );
-            // }
+            for ( let item in json_data ){
+                this.events.push( new EventReminder( item ) );
+            }
+            console.dir(this.events);
         }
 
         /* --------------------
@@ -96,25 +98,23 @@ class App {
 
 
             if (this.checked) {
-                console.log('suppression');
                 const div_end = document.querySelector( '#eventEnd' ).parentNode;
                 form.removeChild( div_end );
             }
             else {
-                console.log('ajout');
-                //Input date
+                //Création de l'input date
                 const inp_end = document.createElement( 'input' );
                 inp_end.type = 'datetime-local';
                 inp_end.name = 'event_end';
                 inp_end.id = 'eventEnd';
                 inp_end.required = true;
 
-                //label
+                //Création du label
                 const label_end = document.createElement( 'label' );
                 label_end.for = 'eventEnd';
                 label_end.textContent = 'Date de fin';
 
-                //div (input + label)
+                //Création de la div (input + label)
                 const div_end = document.createElement( 'div' );
                 div_end.classList.add( 'input' );
                 div_end.id = 'dateEnd';
@@ -127,17 +127,29 @@ class App {
     }
 
 
+    /**
+     *
+     * @param event
+     */
     formHandler( event ) {
         //Empeche le navigateur d'envoyer la requete et d'actualiser la page
         event.preventDefault();
 
         const form = event.target;
+        console.dir(form);
+
+        // //Ajout de l'événement dans le tableau
+        // this.events.push( event );
+        // this.saveToStorage();
+
+        //Ajout du formulaire dans le tableau
+        //Sauvegarde du tableau en localstorage
+        this.events.push( form );
+        this.saveToStorage();
 
         /* ------------------
         Données du formulaire
         ------------------ */ //TODO validation des entrées utilisateurs
-        const title = form['event_title'].value;
-        const desc = form['event_desc'].value;
         const date_start = new Date( form['event_start'].value );
         const date_end = new Date();
 
@@ -163,17 +175,25 @@ class App {
             date_end.setMinutes( time[ 1 ] );
         }
 
-        const lat = form['event_lat'].value;
-        const lng = form['event_lng'].value;
+        //Création d'un objet EventReminder
+        const reminder_data = {
+            'title': form['event_title'].value.trim(),
+            'description': form['event_desc'].value.trim(),
+            'date_start': date_start,
+            'date_end': date_end,
+            'latitude': form['event_lat'].value.trim(),
+            'longitude': form['event_lng'].value.trim()
+        };
+        const reminder = new EventReminder( reminder_data );
 
 
         //Définition de la couleur et du message d'alerte
         // en fonction du nombre de jours restant avant l'événement
+        // défaut vert
         let color = '#12BC25';
         let alert_msg = '';
-        let layer = 'green'
 
-        const days_left = this.numberDaysLeft( date_start );
+        const days_left = this.numberDaysLeft( reminder.date_start );
         //On récupère la partie décimal du nb de jours restants
         // puis on multiplie par 24 pour convertir en heure
         const hours_left = (days_left % 1) * 24;
@@ -182,11 +202,9 @@ class App {
         if ( days_left < 0 ) {
             color = '#f3132c';
             alert_msg = 'Quel dommage, vous avez raté cet événement!';
-            layer = 'red';
         }
         else if ( days_left <= 3 ) {
             color = '#dd9e00';
-            layer = 'orange';
             alert_msg = 'Attention, commence dans ';
             if ( Math.floor(days_left) > 0 ){
                 alert_msg += `${ Math.floor( days_left ) } jours et`
@@ -236,7 +254,7 @@ class App {
 
         //  titre
         const popup_title = document.createElement( 'h4' );
-        popup_title.textContent = title.trim();
+        popup_title.textContent = reminder.title;
 
         //  message en fonction du temps restant
         let time_left = 'Dans ';
@@ -275,16 +293,16 @@ class App {
         //  description
         const popup_desc = document.createElement( 'div' );
         popup_desc.classList.add( 'popup_desc' );
-        popup_desc.textContent = desc.trim();
+        popup_desc.textContent = reminder.description;
 
         //  date de début
         const popup_start = document.createElement( 'span');
-        const date_start_str = this.dateForDisplay( date_start );
+        const date_start_str = this.dateForDisplay( reminder.date_start );
         popup_start.textContent = 'Du ' + date_start_str;
 
         //  date de fin
         const popup_end = document.createElement( 'span');
-        const date_end_str = this.dateForDisplay( date_end );
+        const date_end_str = this.dateForDisplay( reminder.date_end );
         popup_end.textContent = ' au ' + date_end_str;
 
         //  dates div
@@ -294,11 +312,11 @@ class App {
 
         //  latitude
         const popup_lat = document.createElement( 'span');
-        popup_lat.textContent = 'Latitude: ' + lat.trim();
+        popup_lat.textContent = 'Latitude: ' + reminder.latitude;
 
         //  longitude
         const popup_lng = document.createElement( 'span');
-        popup_lng.textContent = 'Longitude: ' + lng.trim();
+        popup_lng.textContent = 'Longitude: ' + reminder.longitude;
 
         //  position div
         const popup_pos = document.createElement( 'div' );
@@ -334,17 +352,16 @@ class App {
         let marker = new mapboxgl.Marker( {color: color, title: popup_title} );
 
         marker
-            .setLngLat({lng, lat} )
+            .setLngLat([ reminder.longitude, reminder.latitude ] )
             .setPopup( popup_click )
             .addTo( this.map );
 
+        //Récupération de l'élément HTML correspondant au marker
         const html_marker = marker.getElement();
         html_marker.title = popup_title.textContent; //TODO delete ??
         html_marker.append( popup_hover );
 
-        //Ajout du marker dans le tableau de markers
-        this.markers.push( marker );
-        this.saveToStorage();
+
     }
 
     /**
@@ -392,9 +409,7 @@ class App {
     }
 
     saveToStorage() {
-        //TODO erreur cyclique
-        // localStorage.setItem( this.storageName, JSON.stringify( this.markers,  ) )
-        // console.dir(this.markers);
+        localStorage.setItem( this.storageName, JSON.stringify( this.events ) )
     }
 
 }

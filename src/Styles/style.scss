@@ -80,9 +80,10 @@ body {
 
     .popup_hover {
       background: lightgrey;
+      border-radius: 4px;
+      left: -100px;
       padding: 0.5rem;
       position: absolute;
-      left: -100px;
       top: -100px;
       width: 200px;
 
