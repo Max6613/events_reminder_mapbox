@@ -89,6 +89,8 @@ class App {
         --- Filtres ---
         ----------- */
         //TODO filtres
+        const cat_icons = document.querySelector( '#catIcons' );
+        cat_icons.addEventListener( 'change', this.filters.bind( this ) )
 
 
 
@@ -137,9 +139,39 @@ class App {
 
     }
 
+    filters( event ) {
+        //Récupération de la checkbox
+        const target = event.target;
+        const regex = [ /^green/, /^orange/, /^red/];
+        let color = '';
+
+        for ( let key in regex ) {
+            let result = target.id.match( regex[ key ] );
+
+            if ( result !== null ) {
+                color = result[0];
+            }
+        }
+
+        //Sélection des markers correspondant à la checkbox activé / désactivé
+        const markers = document.querySelectorAll( '.mapboxgl-marker.' + color );
+
+        //Affichage ou masquage des markers en fonction de l'état de la checkbox
+        for (let i = 0; i < markers.length; i++ ) {
+            console.dir(markers[ i ]);
+            //TODO en fonction de letat de la checkbox, affiché ou modifié le marker
+            // Ajout d'une classe hide avec css display none
+            // ou attr hidden
+        }
+
+
+
+
+
+    }
 
     /**
-     *
+     * Get and verify form data, save to localstorge and create marker
      * @param event
      */
     formHandler( event ) {
@@ -160,8 +192,6 @@ class App {
             inp_err_names.push( 'event_start' );
             //TODO fonction affichage erreur d'entrée sur le formulaire
         }
-
-
 
         const date_start = new Date( form['event_start'].value );
         let date_end = new Date();
@@ -208,7 +238,10 @@ class App {
         this.newMarker( reminder );
     }
 
-
+    /**
+     * Create marker from an EventReminder object
+     * @param reminder
+     */
     newMarker( reminder ) {
         //Définition de la couleur et du message d'alerte
         // en fonction du nombre de jours restant avant l'événement
@@ -373,7 +406,6 @@ class App {
         html_marker.classList.add( marker_class );
         html_marker.append( popup_hover );
     }
-
 
     /**
      * Returns the time remaining before the event in string

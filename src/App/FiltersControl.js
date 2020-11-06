@@ -1,32 +1,51 @@
-import green_icon from '../Assets/Icons/green.png';
-import orange_icon from '../Assets/Icons/orange.png';
-import red_icon from '../Assets/Icons/red.png';
-
-
 export class FiltersControl {
     onAdd( map ) {
         this._map = map;
+        /* -------------------------
+        --- Icones de catégories ---
+        ------------------------- */
+        //> 3 jours (vert)
+        const green_check = document.createElement( 'input' );
+        green_check.type = 'checkbox';
+        // green_check.classList.add( 'cat_check' );
+        green_check.id = 'greenCheck';
+        green_check.checked = true;
 
-        //Création des icones de catégories
-        let green = document.createElement( 'img' );
-        green.src = green_icon;
-        green.classList.add( 'categories_icons' );
-        
-        let orange = document.createElement( 'img' );
-        orange.src = orange_icon;
-        orange.classList.add( 'categories_icons' );
-        
-        let red = document.createElement( 'img' );
-        red.src = red_icon;
-        red.classList.add( 'categories_icons' );
+        const green = document.createElement( 'label' );
+        green.htmlFor = 'greenCheck';
+        green.id = 'greenLbl';
+        green.classList.add( 'category_icon' );
+
+        //<= 3 jours (orange)
+        const orange_check = document.createElement( 'input' );
+        orange_check.type = 'checkbox';
+        // orange_check.classList.add( 'cat_check' );
+        orange_check.id = 'orangeCheck';
+        orange_check.checked = true;
+
+        const orange = document.createElement( 'label' );
+        orange.htmlFor = 'orangeCheck';
+        orange.id = 'orangeLbl';
+        orange.classList.add( 'category_icon' );
+
+        //< 0 jours (rouge)
+        const red_check = document.createElement( 'input' );
+        red_check.type = 'checkbox';
+        // red_check.classList.add( 'cat_check' );
+        red_check.id = 'redCheck';
+        red_check.checked = true;
+
+        const red = document.createElement( 'label' );
+        red.htmlFor = 'redCheck';
+        red.id = 'redLbl';
+        red.classList.add( 'category_icon' );
         
 
         //Création de la div de controle
         this._container = document.createElement('div');
-        this._container.className = 'mapboxgl-ctrl';
-        this._container.append( green );
-        this._container.append( orange );
-        this._container.append( red );
+        this._container.classList.add( 'mapboxgl-ctrl' );
+        this._container.id = 'catIcons';
+        this._container.append( green_check, green, orange_check, orange, red_check, red );
 
         return this._container;
     }
@@ -36,9 +55,9 @@ export class FiltersControl {
         this._map = undefined;
     }
 
-    onControlClick( evt ) {
-        //TODO refraichir les markers
-        console.log( "categories" );
-        console.log( this );
-    }
+    // onControlClick( evt ) {
+    //     //TODO refraichir les markers / DELETE ???
+    //     console.log( "categories" );
+    //     console.log( this );
+    // }
 }

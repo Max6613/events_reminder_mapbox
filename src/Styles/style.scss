@@ -33,13 +33,51 @@ body {
   height: 100vh; //La div contenant la map fait la hauteur de la page
   flex-basis: 66.66666%;
 
-  #refreshIcon,
-  .categories_icons {
+  #refreshIcon {
     width: 25px;
   }
 
-  .categories_icons {
-    margin-left: 5px;
+  #catIcons {
+
+    input[type='checkbox'] {
+      display: none;
+    }
+
+    .category_icon {
+      border-radius: 50%;
+      display: inline-block;
+      height: 25px;
+      margin-left: 5px;
+      width: 25px;
+    }
+
+    #greenLbl {
+      //background: #678667;
+      background: #146614;
+    }
+
+    #greenCheck:checked ~ #greenLbl {
+      background: #27cc27;
+    }
+
+
+    #orangeLbl {
+      //background: #a49066;
+      background: #8c6014;
+    }
+
+    #orangeCheck:checked ~ #orangeLbl {
+      background: #f3a721;
+    }
+
+    #redLbl {
+      //background: #945050;
+      background: #8c1414;
+    }
+
+    #redCheck:checked ~ #redLbl {
+      background: #f32121;
+    }
   }
 
   .popup_click {
