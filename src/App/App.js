@@ -10,6 +10,10 @@ import { UpdateButtonControl } from './UpdateButtonControl';
 import { FiltersControl } from "./FiltersControl";
 import { EventReminder } from "./Models/EventReminder";
 
+const TITLE_LEN = '25';
+const DESC_LEN = '250';
+const DATE_REGEX = new RegExp( /^\d{4,6}-\d{1,2}-\d{1,2}T\d{2}:\d{2}$/ );
+
 
 class App {
     /**
@@ -40,9 +44,7 @@ class App {
      * Launch the application
      */
     start() {
-        // this.events = "";
-        // this.saveToStorage();
-
+        // this.clearMarkers();
         //Instanciation de la carte
         this.map = new mapboxgl.Map({
             container: 'map',
@@ -84,9 +86,9 @@ class App {
         this.map.addControl(filters, 'top-right');
 
         /* -----------
-        --- Layers ---
+        --- Filtres ---
         ----------- */
-        //TODO filtres https://docs.mapbox.com/mapbox-gl-js/example/filter-markers/
+        //TODO filtres
 
 
 
@@ -144,45 +146,56 @@ class App {
         //Empeche le navigateur d'envoyer la requete et d'actualiser la page
         event.preventDefault();
 
+        //Récupération du formulaire
         const form = event.target;
 
+        /* --------------------------
+        --- Données du formulaire ---
+        -------------------------- */ //TODO validation des entrées utilisateurs
+        //contient les noms des inputs en erreur de format
+        const inp_err_names = [];
 
-        /* ------------------
-        Données du formulaire
-        ------------------ */ //TODO validation des entrées utilisateurs
+        //Vérification du format de la date
+        if ( !DATE_REGEX.test( form['event_start'].value ) ){
+            inp_err_names.push( 'event_start' );
+            //TODO fonction affichage erreur d'entrée sur le formulaire
+        }
+
+
+
         const date_start = new Date( form['event_start'].value );
-        const date_end = new Date();
+        let date_end = new Date();
 
         //Si la case "Journée entière" est coché, événement de 8h00 à 18h00
         if ( form['event_all_day'].checked ){
             date_start.setHours( 8 );
             date_start.setMinutes( 0 );
 
-            date_end.setDate( date_start.getDate() )
+            //Copie de la date de début et modification de l'heure
+            date_end.setFullYear( date_start.getFullYear() );
+            date_end.setMonth( date_start.getMonth() );
+            date_end.setDate( date_start.getDate() );
             date_end.setHours( 18 );
             date_end.setMinutes( 0 );
         }
-        else { //TODO trouver un autre moyen de récupérer la date de fin, mettre date_end en let ???
-            const tmp_end = form['event_end'].value.split( 'T' );
-            const dates = tmp_end[ 0 ].split( '-' );
-            const time = tmp_end[ 1 ].split( ':' );
-
-            date_end.setFullYear( dates[ 0 ] );
-            date_end.setMonth( dates[ 1 ] - 1  );
-            date_end.setDate( dates[ 2 ] );
-
-            date_end.setHours( time[ 0 ] );
-            date_end.setMinutes( time[ 1 ] );
+        //Sinon date entrée dans le formulaire
+        else {
+            //Vérification du format de la date
+            if ( !DATE_REGEX.test( form['event_end'].value ) ){
+                inp_err_names.push( 'event_end' );
+                //TODO fonction affichage erreur d'entrée sur le formulaire
+            }
+            date_end = new Date( form['event_end'].value );
         }
 
         //Création d'un objet EventReminder
         const reminder_data = {
-            'title': form['event_title'].value.trim(),
-            'description': form['event_desc'].value.trim(),
-            'date_start': date_start,
-            'date_end': date_end,
-            'latitude': form['event_lat'].value.trim(),
-            'longitude': form['event_lng'].value.trim()
+            'title':        this.stringShrinker( form[ 'event_title' ].value.trim(), TITLE_LEN),
+            'description':  this.stringShrinker( form[ 'event_desc' ].value.trim(), DESC_LEN ),
+            'date_start':   date_start,
+            'date_end':     date_end,
+            'latitude':     this.stringShrinker( form['event_lat'].value.trim(), 10, false ),
+            'longitude':    this.stringShrinker( form['event_lng'].value.trim(), 10, false )
         };
         const reminder = new EventReminder( reminder_data );
 
@@ -193,9 +206,6 @@ class App {
 
         //Méthode de création d'un marker
         this.newMarker( reminder );
-
-
-
     }
 
 
@@ -204,6 +214,7 @@ class App {
         // en fonction du nombre de jours restant avant l'événement
         // défaut +3 jours => vert
         let color = '#12BC25';
+        let marker_class = 'green';
         let alert_msg = '';
 
         const days_left = this.numberDaysLeft( reminder.date_start );
@@ -211,11 +222,13 @@ class App {
         //evenement passé => rouge
         if ( days_left < 0 ) {
             color = '#f3132c';
+            marker_class = 'red';
             alert_msg = 'Quel dommage, vous avez raté cet événement!';
         }
         //3 jours ou moins => orange
         else if ( days_left <= 3 ) {
             color = '#dd9e00';
+            marker_class = 'orange';
             alert_msg = 'Attention, commence ' + this.timeLeftStr( days_left ).toLowerCase();
         }
 
@@ -357,6 +370,7 @@ class App {
         //Récupération de l'élément HTML correspondant au marker
         const html_marker = marker.getElement();
         html_marker.title = popup_title.textContent; //TODO delete ??
+        html_marker.classList.add( marker_class );
         html_marker.append( popup_hover );
     }
 
@@ -457,10 +471,30 @@ class App {
         // return Math.floor( diff / 1000 / 60 / 60 / 24 );
     }
 
+    /**
+     * Returns a string shortenend to the length entered
+     * @param str
+     * @param len
+     * @returns {string|*}
+     */
+    stringShrinker( str, len, ellipsis = true ) {
+        return str.length > len ? str.substring( 0, len - 3 ) + ( ellipsis ? '...' : '' ) : str;
+    }
+
+    /**
+     * Saves the events array in localstorage
+     */
     saveToStorage() {
         localStorage.setItem( this.storageName, JSON.stringify( this.events ) )
     }
 
+    /**
+     * Deletes all Markers from map and storage
+     */
+    clearMarkers() { //TODO delete from map
+        this.events = "";
+        this.saveToStorage();
+    }
 }
 
 const app = new App();
