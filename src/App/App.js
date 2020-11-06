@@ -40,6 +40,9 @@ class App {
      * Launch the application
      */
     start() {
+        // this.events = "";
+        // this.saveToStorage();
+
         //Instanciation de la carte
         this.map = new mapboxgl.Map({
             container: 'map',
@@ -48,20 +51,28 @@ class App {
             zoom: 5.6
         });
 
-        //TODO Récupération des données du localstorage
+
         const str_data = localStorage.getItem( this.storageName );
 
         //Si des données existe en localstorage
         if ( str_data ) {
             //Création d'un JSON à partir des données récupérés
             const json_data = JSON.parse( str_data );
-            console.dir(json_data);
+
             //Remplissage du tableau de Markers à partir du JSON
-            for ( let item in json_data ){
-                this.events.push( new EventReminder( item ) );
+            for ( let key in json_data ){
+                this.events.push( EventReminder.fromJson( json_data[ key ] ) );
             }
-            console.dir(this.events);
         }
+
+
+        //Ajout des markers récupéré depuis le localstorage à la carte
+        for ( let key in this.events ) {
+            // console.dir( this.events[key]);
+            this.newMarker( this.events[ key ] );
+        }
+
+        //TODO Appel à la méthode de création des markers
 
         /* --------------------
         Controles personnalisés
@@ -138,14 +149,6 @@ class App {
         const form = event.target;
         console.dir(form);
 
-        // //Ajout de l'événement dans le tableau
-        // this.events.push( event );
-        // this.saveToStorage();
-
-        //Ajout du formulaire dans le tableau
-        //Sauvegarde du tableau en localstorage
-        this.events.push( form );
-        this.saveToStorage();
 
         /* ------------------
         Données du formulaire
@@ -186,7 +189,20 @@ class App {
         };
         const reminder = new EventReminder( reminder_data );
 
+        //Ajout de l'object EventReminder dans le tableau
+        //Sauvegarde du tableau en localstorage
+        this.events.push( reminder );
+        this.saveToStorage();
 
+        //Méthode de création d'un marker
+        this.newMarker( reminder );
+
+
+
+    }
+
+
+    newMarker( reminder ) {
         //Définition de la couleur et du message d'alerte
         // en fonction du nombre de jours restant avant l'événement
         // défaut vert
@@ -360,9 +376,8 @@ class App {
         const html_marker = marker.getElement();
         html_marker.title = popup_title.textContent; //TODO delete ??
         html_marker.append( popup_hover );
-
-
     }
+
 
     /**
      * Return a string formatted date to display from a Date object

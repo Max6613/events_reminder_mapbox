@@ -13,4 +13,23 @@ export class EventReminder {
             }
         }
     }
+
+    static fromJson ( json ) {
+        const reminder = new EventReminder( {} );
+
+        for ( let key in json ) {
+            if ( reminder.hasOwnProperty( key ) ){
+                switch ( key ) {
+                    case 'date_start':
+                    case 'date_end':
+                        reminder[ key ] = new Date( json[ key ] );
+                        break;
+                    default:
+                        reminder[ key ] = json[ key ];
+                        break;
+                }
+            }
+        }
+        return reminder;
+    }
 }
