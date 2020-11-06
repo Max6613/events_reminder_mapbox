@@ -68,11 +68,9 @@ class App {
 
         //Ajout des markers récupéré depuis le localstorage à la carte
         for ( let key in this.events ) {
-            // console.dir( this.events[key]);
             this.newMarker( this.events[ key ] );
         }
 
-        //TODO Appel à la méthode de création des markers
 
         /* --------------------
         Controles personnalisés
@@ -147,7 +145,6 @@ class App {
         event.preventDefault();
 
         const form = event.target;
-        console.dir(form);
 
 
         /* ------------------
@@ -205,32 +202,26 @@ class App {
     newMarker( reminder ) {
         //Définition de la couleur et du message d'alerte
         // en fonction du nombre de jours restant avant l'événement
-        // défaut vert
+        // défaut +3 jours => vert
         let color = '#12BC25';
         let alert_msg = '';
 
         const days_left = this.numberDaysLeft( reminder.date_start );
-        //On récupère la partie décimal du nb de jours restants
-        // puis on multiplie par 24 pour convertir en heure
-        const hours_left = (days_left % 1) * 24;
-        const min_left = (hours_left % 1) * 60;
 
+        //evenement passé => rouge
         if ( days_left < 0 ) {
             color = '#f3132c';
             alert_msg = 'Quel dommage, vous avez raté cet événement!';
         }
+        //3 jours ou moins => orange
         else if ( days_left <= 3 ) {
             color = '#dd9e00';
-            alert_msg = 'Attention, commence dans ';
-            if ( Math.floor(days_left) > 0 ){
-                alert_msg += `${ Math.floor( days_left ) } jours et`
-            }
-            alert_msg += `${ Math.floor( hours_left ) } heures.`;
+            alert_msg = 'Attention, commence ' + this.timeLeftStr( days_left ).toLowerCase();
         }
 
-        /* ----------
-        Objets Mapbox
-         ----------*/
+        /* --------------------
+        ---- Objets Mapbox ----
+        -------------------- */
 
         /* POPUP AU CLICK
         <div class="popup_click">
@@ -272,39 +263,16 @@ class App {
         const popup_title = document.createElement( 'h4' );
         popup_title.textContent = reminder.title;
 
-        //  message en fonction du temps restant
-        let time_left = 'Dans ';
-        if ( Math.floor(days_left) > 3 ) { // + 3 jours: "Dans x jours"
-            time_left += Math.floor(days_left) + ' jours';
-        }
-        else if ( Math.floor(days_left) > 0 ) { // 1/3 jours: "Dans X jours et Y heures"
-            time_left += Math.floor(days_left) + ' jours et ' + Math.floor(hours_left) + ' heures';
-        }
-        else if ( Math.floor(days_left) === 0 ) {
-            if ( Math.floor(hours_left) > 0 ){ // - 1 jours/ + 1 heure: "Dans X heures et Y minutes"
-                time_left += Math.floor(hours_left) + ' heures et ' + Math.floor(min_left) + ' minutes';
-            }
-            else { // - 1 jours/ - 1 heure: "Dans X minutes"
-                time_left += Math.floor(min_left) + ' minutes';
-            }
-        }
-        else {
-            time_left = 'Evénement passé';
-        }
-
-        //  temps restant
-        const popup_time_left = document.createElement( 'em' );
-        popup_time_left.textContent = time_left;
-
-        //  titre div
-        const popup_title_div = document.createElement( 'div' );
-        popup_title_div.classList.add( 'popup_title' );
-        popup_title_div.append( popup_title, popup_time_left );
-
         //  header
         const popup_header = document.createElement( 'div' );
         popup_header.classList.add( 'popup_header' );
-        popup_header.append( popup_alert, popup_title_div );
+        popup_header.append( popup_alert, popup_title );
+
+        // console.dir(popup_title);
+        // console.dir(popup_time_left);
+        // console.dir(popup_title_div);
+        // console.dir(popup_alert);
+        // console.dir(popup_header);
 
         //  description
         const popup_desc = document.createElement( 'div' );
@@ -360,6 +328,20 @@ class App {
            </div>
         </div>
         */
+        // message en fonction du temps restant
+        this.timeLeftArray(2.9532);
+
+        const time_left = this.timeLeftStr( days_left );
+
+        // temps restant
+        const popup_time_left = document.createElement( 'em' );
+        popup_time_left.textContent = time_left;
+
+        // titre div (titre + temps restant)
+        const popup_title_div = document.createElement( 'div' );
+        popup_title_div.classList.add( 'popup_title' );
+        popup_title_div.append( popup_title, popup_time_left );
+
         const popup_hover = document.createElement( 'div' );
         popup_hover.classList.add( 'popup_hover' );
         popup_hover.append( popup_title_div, popup_dates )
@@ -380,7 +362,59 @@ class App {
 
 
     /**
-     * Return a string formatted date to display from a Date object
+     * Returns the time remaining before the event in string
+     * @param days_left
+     * @returns {string}
+     */
+    timeLeftStr( days_left ) {
+        // [days, hours, minutes]
+        const time_arr = this.timeLeftArray( days_left );
+        const days = time_arr[ 0 ];
+        const hours = time_arr[ 1 ];
+        const minutes = time_arr[ 2 ];
+
+        let str = 'Dans ';
+
+        if ( days > 3 ) { // + 3 jours: "Dans x jours"
+            str += days + ' jours';
+        }
+        else if ( days > 0 ) { // 1/3 jours: "Dans X jours et Y heures"
+            str += days + ' jours et ' + hours + ' heures';
+        }
+        else if ( days === 0 ) {
+            if ( hours > 0 ){ // - 1 jours/ + 1 heure: "Dans X heures et Y minutes"
+                str += hours + ' heures et ' + minutes + ' minutes';
+            }
+            else { // - 1 jours/ - 1 heure: "Dans X minutes"
+                str += minutes + ' minutes';
+            }
+        }
+        else {
+            str = 'Evénement passé';
+        }
+
+        return str;
+    }
+
+    /**
+     * Returns an array containing the days, hours and minutes left before the event
+     * @param days_left
+     * @returns {number[]}
+     */
+    timeLeftArray( days_left ) {
+        const days = Math.floor( days_left ) ;
+        const hours_left = days_left % 1 * 24;
+
+        const hours = Math.floor( hours_left );
+        const mins_left = hours_left % 1 * 60;
+
+        const minutes = Math.floor( mins_left );
+
+        return [ days, hours, minutes ];
+    }
+
+    /**
+     * Returns a string formatted date to display from a Date object
      * @param date
      * @returns {string}
      */
@@ -393,7 +427,7 @@ class App {
     }
 
     /**
-     * Return a string formatted number, with 'size' digits
+     * Returns a string formatted number, with 'size' digits
      * @param nb
      * @param size
      * @returns {string}
@@ -405,7 +439,7 @@ class App {
     }
 
     /**
-     * Return the number of days (float) between now and a Date object
+     * Returns the number of days (float) between now and a Date object
      * @param dateStart
      * @returns {number}
      */
