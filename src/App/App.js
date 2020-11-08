@@ -33,12 +33,14 @@ class App {
      */
     events = [];
 
+
     /**
      * Class App constructor
      */
     constructor() {
         mapboxgl.accessToken = config.apis.mapbox_gl.api_key;
     }
+
 
     /**
      * Launch the application
@@ -67,10 +69,8 @@ class App {
             }
         }
 
-
         //Ajout des markers récupéré depuis le localstorage à la carte
         this.updateMap();
-
 
         /* ------------------
         ----- Controles -----
@@ -84,13 +84,11 @@ class App {
         const filters = new FiltersControl();
         this.map.addControl(filters, 'top-right');
 
-
         /* ---------------------
         --- Rafraichissement ---
         --------------------- */
         const refresh = document.querySelector( '#refreshMarkers' );
         refresh.addEventListener( 'click', this.updateMap.bind( this ) );
-
 
         /* -----------
         --- Filtres ---
@@ -98,13 +96,11 @@ class App {
         const cat_icons = document.querySelector( '#catIcons' );
         cat_icons.addEventListener( 'change', this.filters.bind( this ) )
 
-
         /* ---------------
         --- Formulaire ---
         --------------- */
         const form = document.querySelector('#formEvent');
         form.addEventListener('submit', this.formHandler.bind( this ) );
-
 
         /* -------------------
         ------ Checkbox ------
@@ -112,7 +108,6 @@ class App {
         ------------------- */
         const allDayCheck = document.querySelector( '#eventAllDay' );
         allDayCheck.addEventListener( 'change', function ( event ) {
-
 
             if (this.checked) {
                 const div_end = document.querySelector( '#eventEnd' ).parentNode;
@@ -141,9 +136,13 @@ class App {
             }
         });
 
-
-
+        /* ----------------
+        --- Suppression ---
+        ---------------- */
+        const delete_all = document.querySelector( '#deleteAll' );
+        delete_all.addEventListener( 'click', this.clearMarkers.bind( this ) );
     }
+
 
     /**
      * Display or hide markers corresponding to a filter
@@ -165,7 +164,6 @@ class App {
 
         //Sélection des markers correspondant à la checkbox activé / désactivé
         const markers_selected = document.querySelectorAll( '.mapboxgl-marker.' + color );
-        // console.dir(markers_selected);
 
         //Affichage ou masquage des markers en fonction de l'état de la checkbox
         Array.prototype.forEach.call( markers_selected, function ( node ) {
@@ -177,6 +175,7 @@ class App {
             }
         });
     }
+
 
     /**
      * Get and verify form data, save to localstorge and create marker
@@ -245,6 +244,7 @@ class App {
         //Méthode de création d'un marker
         this.newMarker( reminder );
     }
+
 
     /**
      * Create marker from an EventReminder object
@@ -415,6 +415,7 @@ class App {
         html_marker.append( popup_hover );
     }
 
+
     /**
      * Returns the time remaining before the event in string
      * @param days_left
@@ -450,6 +451,7 @@ class App {
         return str;
     }
 
+
     /**
      * Returns an array containing the days, hours and minutes left before the event
      * @param days_left
@@ -467,6 +469,7 @@ class App {
         return [ days, hours, minutes ];
     }
 
+
     /**
      * Returns a string formatted date to display from a Date object
      * @param date
@@ -480,12 +483,14 @@ class App {
             ":" + this.numberForDisplay( date.getMinutes(), 2 );
     }
 
+
     /**
      * Returns a string formatted number, with 'size' digits
      * @param nb
      * @param size
      * @returns {string}
      */
+
     numberForDisplay( nb, size ){
         nb = nb.toString();
         while ( nb.length < size ) nb = '0' + nb;
@@ -511,6 +516,7 @@ class App {
         // return Math.floor( diff / 1000 / 60 / 60 / 24 );
     }
 
+
     /**
      * Returns a string shortenend to the length entered
      * @param str
@@ -522,6 +528,7 @@ class App {
         return str.length > len ? str.substring( 0, len - 3 ) + ( ellipsis ? '...' : '' ) : str;
     }
 
+
     /**
      * Saves the events array in localstorage
      */
@@ -529,13 +536,25 @@ class App {
         localStorage.setItem( this.storageName, JSON.stringify( this.events ) )
     }
 
+
     /**
      * Deletes all Markers from map and storage
      */
-    clearMarkers() { //TODO delete from map
-        this.events = "";
+    clearMarkers() {
+        console.log('deletion');
+
+        //Sélection des markers correspondant à la checkbox activé / désactivé
+        const markers = document.querySelectorAll( '.mapboxgl-marker' );
+
+        //Affichage ou masquage des markers en fonction de l'état de la checkbox
+        Array.prototype.forEach.call( markers, function ( marker ) {
+            marker.remove();
+        });
+
+        this.events = [];
         this.saveToStorage();
     }
+
 
     /**
      * Display markers on the map

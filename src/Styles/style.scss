@@ -6,6 +6,10 @@
   padding: 0;
 }
 
+*:focus {
+  outline: none;
+}
+
 textarea {
   resize: none;
 }
@@ -146,7 +150,10 @@ body {
 }
 
 #rightSide {
+  display: flex;
   flex-basis: 33.33333%;
+  flex-direction: column;
+  justify-content: space-between;
   padding: 5% 1%;
 
   .input {
@@ -179,23 +186,37 @@ body {
   }
 
   button {
+    background: #008b8b;
     border: 1px #005959 solid;
     border-radius: 4px;
     box-shadow: black 0 15px 30px -15px;
-    background: #008b8b;
     color: #F2F2F2;
     padding: 0.5rem 1rem;
-
   }
 
   button:hover {
-    border: 1px #008b8b solid;
     background: #00bfbf;
+    border-color: #008b8b;
   }
 
   button:active {
-    border: 1px #00bfbf solid;
     background: #00f2f2;
+    border-color: #00bfbf;
+  }
+
+  #deleteAll {
+    background: #8b0000;
+    border: 1px #590000 solid;
+  }
+
+  #deleteAll:hover {
+    background: #bf0000;
+    border-color: #590000;
+  }
+
+  #deleteAll:active {
+    background: #f20000;
+    border-color: #bf0000;
   }
 }
 
