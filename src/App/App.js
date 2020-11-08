@@ -69,35 +69,39 @@ class App {
 
 
         //Ajout des markers récupéré depuis le localstorage à la carte
-        for ( let key in this.events ) {
-            this.newMarker( this.events[ key ] );
-        }
+        this.updateMap();
 
 
-        /* --------------------
-        Controles personnalisés
-        -------------------- */
+        /* ------------------
+        ----- Controles -----
+        --- personnalisés ---
+        ------------------ */
         //Bouton d'actualisation
         const updateBtn = new UpdateButtonControl();
         this.map.addControl(updateBtn, 'top-left');
 
-        //Catégories
+        //Filtres
         const filters = new FiltersControl();
         this.map.addControl(filters, 'top-right');
+
+
+        /* ---------------------
+        --- Rafraichissement ---
+        --------------------- */
+        const refresh = document.querySelector( '#refreshMarkers' );
+        refresh.addEventListener( 'click', this.updateMap.bind( this ) );
+
 
         /* -----------
         --- Filtres ---
         ----------- */
-        //TODO filtres
         const cat_icons = document.querySelector( '#catIcons' );
         cat_icons.addEventListener( 'change', this.filters.bind( this ) )
 
 
-
-
-        /* ---------
-        --- Form ---
-        --------- */
+        /* ---------------
+        --- Formulaire ---
+        --------------- */
         const form = document.querySelector('#formEvent');
         form.addEventListener('submit', this.formHandler.bind( this ) );
 
@@ -137,8 +141,14 @@ class App {
             }
         });
 
+
+
     }
 
+    /**
+     * Display or hide markers corresponding to a filter
+     * @param event
+     */
     filters( event ) {
         //Récupération de la checkbox
         const target = event.target;
@@ -505,6 +515,7 @@ class App {
      * Returns a string shortenend to the length entered
      * @param str
      * @param len
+     * @param ellipsis
      * @returns {string|*}
      */
     stringShrinker( str, len, ellipsis = true ) {
@@ -524,6 +535,16 @@ class App {
     clearMarkers() { //TODO delete from map
         this.events = "";
         this.saveToStorage();
+    }
+
+    /**
+     * Display markers on the map
+     */
+    updateMap() {
+        console.log('update');
+        for ( let key in this.events ) {
+            this.newMarker( this.events[ key ] );
+        }
     }
 }
 

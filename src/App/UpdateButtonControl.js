@@ -12,6 +12,7 @@ export class UpdateButtonControl {
         //Création de la div de controle
         this._container = document.createElement('div');
         this._container.className = 'mapboxgl-ctrl';
+        this._container.id = 'refreshMarkers';
         this._container.append( icon );
 
         return this._container;
