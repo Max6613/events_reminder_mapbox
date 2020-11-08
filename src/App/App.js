@@ -154,20 +154,18 @@ class App {
         }
 
         //Sélection des markers correspondant à la checkbox activé / désactivé
-        const markers = document.querySelectorAll( '.mapboxgl-marker.' + color );
+        const markers_selected = document.querySelectorAll( '.mapboxgl-marker.' + color );
+        // console.dir(markers_selected);
 
         //Affichage ou masquage des markers en fonction de l'état de la checkbox
-        for (let i = 0; i < markers.length; i++ ) {
-            console.dir(markers[ i ]);
-            //TODO en fonction de letat de la checkbox, affiché ou modifié le marker
-            // Ajout d'une classe hide avec css display none
-            // ou attr hidden
-        }
-
-
-
-
-
+        Array.prototype.forEach.call( markers_selected, function ( node ) {
+            if ( !target.checked ) {
+                node.setAttribute( 'hidden', '' );
+            }
+            else {
+                node.removeAttribute( 'hidden' );
+            }
+        });
     }
 
     /**
