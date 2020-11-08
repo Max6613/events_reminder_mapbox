@@ -56,6 +56,8 @@ class App {
         });
 
 
+
+        //Récupération des données du localstorage
         const str_data = localStorage.getItem( this.storageName );
 
         //Si des données existe en localstorage
@@ -141,6 +143,14 @@ class App {
         ---------------- */
         const delete_all = document.querySelector( '#deleteAll' );
         delete_all.addEventListener( 'click', this.clearMarkers.bind( this ) );
+
+        /* -----------------------
+        --------- Bonus 1 --------
+        --- Sélection position ---
+        ------ sur la carte ------
+        ----------------------- */
+        const selectPos = document.querySelector( '#selectPos' );
+        selectPos.addEventListener( 'click', this.selectPosOnMap.bind( this ) );
     }
 
 
@@ -321,12 +331,6 @@ class App {
         const popup_header = document.createElement( 'div' );
         popup_header.classList.add( 'popup_header' );
         popup_header.append( popup_alert, popup_title );
-
-        // console.dir(popup_title);
-        // console.dir(popup_time_left);
-        // console.dir(popup_title_div);
-        // console.dir(popup_alert);
-        // console.dir(popup_header);
 
         //  description
         const popup_desc = document.createElement( 'div' );
@@ -541,8 +545,6 @@ class App {
      * Deletes all Markers from map and storage
      */
     clearMarkers() {
-        console.log('deletion');
-
         //Sélection des markers correspondant à la checkbox activé / désactivé
         const markers = document.querySelectorAll( '.mapboxgl-marker' );
 
@@ -560,9 +562,70 @@ class App {
      * Display markers on the map
      */
     updateMap() {
-        console.log('update');
         for ( let key in this.events ) {
             this.newMarker( this.events[ key ] );
+        }
+    }
+
+
+    /**
+     * Enter in mode selection, cursor change, click on map will set Lat/Long inputs values
+     * @param event
+     */
+    selectPosOnMap( event ) {
+
+        const target = event.target;
+
+//Passage en mode d'entrée de la position par l'utilisateur
+        if ( target.classList.contains( 'cancel' ) ) {
+            //Réactivation des champs input
+            const pos_inputs = [ document.querySelector( '#eventLat' ), document.querySelector( '#eventLng' ) ]
+
+            for (let i in pos_inputs ) {
+                pos_inputs[ i ].removeAttribute( 'disabled' );
+            }
+
+            //Curseur sur la carte par défaut
+            document.querySelector( '#map' ).classList.remove( 'selectMode' );
+
+            //Suppression du message dans le formulaire + changement du texte du bouton
+            document.querySelector( '#selectModeMess' ).remove();
+            target.classList.remove( 'cancel' );
+            target.textContent = 'Choisir sur la carte';
+
+            this.map.on( 'click', null );
+        }
+        //Passage en mode de sélection de la position sur la carte
+        else {
+            //Désactivation des champs input
+            const pos_inputs = [ document.querySelector( '#eventLat' ), document.querySelector( '#eventLng' ) ]
+
+            for (let i in pos_inputs ) {
+                pos_inputs[ i ].disabled = true;
+            }
+
+            //Curseur sur la carte 'crosshair'
+            document.querySelector( '#map' ).classList.add( 'selectMode' );
+
+            //Ajout d'un message dans le formulaire + changement du texte du bouton
+            const mess = document.createElement( 'span' );
+            mess.textContent = 'Cliquez sur la carte à l\'emplacement souhaité';
+            mess.id = 'selectModeMess';
+            target.before( mess );
+            target.classList.add( 'cancel' );
+            target.textContent = 'Annuler';
+
+            //Ajout des coordonnées du click aux imputs
+            this.map.on( 'click', function (event) {
+                const pos = event.lngLat;
+
+                document.querySelector( '#eventLng' ).value = pos.lng.toFixed( 7 );
+                document.querySelector( '#eventLat' ).value = pos.lat.toFixed( 7 );
+
+                //On déclenche un evenement click sur le meme bouton pour revenir à l'état d'origine
+                target.click();
+            });
+
         }
     }
 }

@@ -26,6 +26,11 @@ h2 {
   margin-bottom: 1rem;
 }
 
+h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
 
 body {
   display: flex;
@@ -149,41 +154,18 @@ body {
   }
 }
 
+#map.selectMode canvas {
+  cursor: crosshair;
+}
+
+
+
 #rightSide {
   display: flex;
   flex-basis: 33.33333%;
   flex-direction: column;
   justify-content: space-between;
   padding: 5% 1%;
-
-  .input {
-    display: flex;
-    margin-bottom: 0.5rem;
-
-  }
-
-  .input:not(.check) {
-    justify-content: space-between;
-
-    label {
-      flex-basis: 33.33333%;
-    }
-
-    input,
-    textarea {
-      border-radius: 4px;
-
-      flex-grow: 1;
-    }
-
-    textarea {
-      height: 5rem;
-    }
-  }
-
-  .input.check {
-    justify-content: center;
-  }
 
   button {
     background: #008b8b;
@@ -202,6 +184,84 @@ body {
   button:active {
     background: #00f2f2;
     border-color: #00bfbf;
+  }
+
+  button.cancel {
+    background: #cc7700;
+    border-color: #995900;
+  }
+
+  button.cancel:hover {
+    background: #e68600;
+    border-color: #cc7700;
+  }
+
+  button.cancel:active {
+    background: #ff9500;
+    border-color: #e68600;
+  }
+
+
+
+  #formEvent {
+
+    input,
+    textarea {
+      padding: 0 0.25rem;
+    }
+
+    input:disabled {
+      background: #b3b3b3;
+      color: #666666;
+      cursor: not-allowed;
+    }
+
+    .input,
+    #infosForm,
+    #datesForm,
+    #positionForm {
+      display: flex;
+      margin-bottom: 0.5rem;
+
+    }
+
+    .input:not(.check) {
+      justify-content: space-between;
+
+      label {
+        flex-basis: 33.33333%;
+      }
+
+      input,
+      textarea {
+        border-radius: 4px;
+
+        flex-grow: 1;
+      }
+
+      textarea {
+        height: 5rem;
+      }
+    }
+
+    .input.check {
+      justify-content: center;
+    }
+
+    #infosForm,
+    #datesForm,
+    #positionForm {
+      border: 1px #808080 solid;
+      border-radius: 4px;
+      flex-direction: column;
+      padding: 10px;
+    }
+
+
+
+    #selectPos {
+      padding: 0.25rem 1rem;
+    }
   }
 
   #deleteAll {

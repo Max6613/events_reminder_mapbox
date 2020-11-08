@@ -18,81 +18,93 @@
             <h2>Nouveau rappel</h2>
 
             <form action="" id="formEvent">
-                <div class="input" id="title">
-                    <label for="eventTitle">Titre</label>
-                    <input type="text"
-                           name="event_title"
-                           id="eventTitle"
-                           placeholder="25 caractères maximum"
-                           maxlength="25"
-                           required
-                           value="Test"
-                    ><!--TODO delete value-->
+
+                <div id="infosForm">
+
+                    <div class="input" id="title">
+                        <label for="eventTitle">Titre</label>
+                        <input type="text"
+                               name="event_title"
+                               id="eventTitle"
+                               placeholder="25 caractères maximum"
+                               maxlength="25"
+                               required
+                               value="Test"
+                        ><!--TODO delete value-->
+                    </div>
+
+                    <div class="input"  id="description">
+                        <label for="eventDesc">Description</label>
+                        <textarea name="event_desc"
+                                  id="eventDesc"
+                                  placeholder="Maximum 250 caractères"
+                                  maxlength="250"
+                                  required
+                        >Les enfants sont chez la nounou, pas de travail, je vais regarder netflix toute la journée.</textarea><!--TODO delete value-->
+                    </div>
+
                 </div>
 
-                <div class="input"  id="description">
-                    <label for="eventDesc">Description</label>
-                    <textarea name="event_desc"
-                              id="eventDesc"
-                              placeholder="Maximum 250 caractères"
-                              maxlength="250"
-                              required
-                    >Les enfants sont chez la nounou, pas de travail, je vais regarder netflix toute la journée.</textarea><!--TODO delete value-->
+                <div id="datesForm">
+
+                    <div class="input" id="dateStart">
+                        <label for="eventStart">Date de début</label>
+                        <input type="datetime-local"
+                               name="event_start"
+                               id="eventStart"
+                               required
+                        >
+                    </div>
+
+                    <!--TODO si checkbox coché enlever date de fin-->
+                    <div class="input check"  id="allDayCheck">
+                        <input type="checkbox"
+                               name="event_all_day"
+                               id="eventAllDay"
+                        >
+                        <label for="eventAllDay"> Journée entière</label>
+                    </div>
+
+                    <div class="input" id="dateEnd">
+                        <label for="eventEnd">Date de fin</label>
+                        <input type="datetime-local"
+                               name="event_end"
+                               id="eventEnd"
+                               required
+                        >
+                    </div>
+
                 </div>
 
-                <div class="input" id="dateStart">
-                    <label for="eventStart">Date de début</label>
-                    <input type="datetime-local"
-                           name="event_start"
-                           id="eventStart"
-                           required
-                    >
-                </div>
+                <div id="positionForm">
 
-                <!--TODO si checkbox coché enlever date de fin-->
-                <div class="input check"  id="allDayCheck">
-                    <input type="checkbox"
-                           name="event_all_day"
-                           id="eventAllDay"
-                    >
-                    <label for="eventAllDay"> Journée entière</label>
-                </div>
+                    <div class="input" id="latitude">
+                        <label for="eventLat">Latitude</label>
+                        <input type="number"
+                               name="event_lat"
+                               id="eventLat"
+                               min="-90"
+                               max="90"
+                               step="0.0000001"
+                               required
+                               value="42.6826202"
+                        ><!--TODO delete value-->
+                    </div>
 
-                <div class="input" id="dateEnd">
-                    <label for="eventEnd">Date de fin</label>
-                    <input type="datetime-local"
-                           name="event_end"
-                           id="eventEnd"
-                           required
-                    >
-                </div>
+                    <div class="input" id="longitude">
+                        <label for="eventLng">Longitude</label>
+                        <input type="number"
+                               name="event_lng"
+                               id="eventLng"
+                               min="-180"
+                               max="180"
+                               step="0.0000001"
+                               required
+                               value="2.793711"
+                        ><!--TODO delete value-->
+                    </div>
+                    <button type="button" id="selectPos">Choisir sur la carte</button>
 
-                <div class="input" id="latitude">
-                    <label for="eventLat">Latitude</label>
-                    <input type="number"
-                           name="event_lat"
-                           id="eventLat"
-                           min="-90"
-                           max="90"
-                           step="0.0000001"
-                           placeholder="47.038165"
-                           required
-                           value="42.6826202"
-                    ><!--TODO delete value-->
-                </div>
-
-                <div class="input" id="longitude">
-                    <label for="eventLng">Longitude</label>
-                    <input type="number"
-                           name="event_lng"
-                           id="eventLng"
-                           min="-180"
-                           max="180"
-                           step="0.0000001"
-                           placeholder="1.751749"
-                           required
-                           value="2.793711"
-                    ><!--TODO delete value-->
                 </div>
 
                 <button type="submit">Ajouter</button>
