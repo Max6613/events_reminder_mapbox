@@ -2,6 +2,9 @@
   IMPORTS
 -------- */
 import mapboxgl from 'mapbox-gl';
+import flatpickr from 'flatpickr';
+import { French } from 'flatpickr/dist/l10n/fr.js'
+
 
 import config from '../../app.config.json';
 import '../Styles/style.scss';
@@ -46,7 +49,6 @@ class App {
      * Launch the application
      */
     start() {
-        // this.clearMarkers();
         //Instanciation de la carte
         this.map = new mapboxgl.Map({
             container: 'map',
@@ -54,8 +56,6 @@ class App {
             center: [1.751749, 47.038165],
             zoom: 5.6
         });
-
-
 
         //Récupération des données du localstorage
         const str_data = localStorage.getItem( this.storageName );
@@ -109,34 +109,7 @@ class App {
         --- journée entière --
         ------------------- */
         const allDayCheck = document.querySelector( '#eventAllDay' );
-        allDayCheck.addEventListener( 'change', function ( event ) {
-
-            if (this.checked) {
-                document.querySelector( '#dateEnd' ).remove();
-            }
-            else {
-                //Création de l'input date
-                const inp_end = document.createElement( 'input' );
-                inp_end.type = 'datetime-local';
-                inp_end.name = 'event_end';
-                inp_end.id = 'eventEnd';
-                inp_end.required = true;
-
-                //Création du label
-                const label_end = document.createElement( 'label' );
-                label_end.for = 'eventEnd';
-                label_end.textContent = 'Date de fin';
-
-                //Création de la div (input + label)
-                const div_end = document.createElement( 'div' );
-                div_end.classList.add( 'input' );
-                div_end.id = 'dateEnd';
-                div_end.append( label_end, inp_end );
-
-                //Ajout de la div
-                document.querySelector( '#datesForm' ).append( div_end );
-            }
-        });
+        allDayCheck.addEventListener( 'change', this.checkboxEvent.bind( this ) );
 
         /* ----------------
         --- Suppression ---
@@ -151,6 +124,16 @@ class App {
         ----------------------- */
         const selectPos = document.querySelector( '#selectPos' );
         selectPos.addEventListener( 'click', this.selectPosOnMap.bind( this ) );
+
+        /* --------------------
+        ------- Bonus 2 -------
+        --- Flatpickr dates ---
+        -------------------- */
+        this.dateFlatpickr( '#eventStart' );
+        this.dateFlatpickr( '#eventEnd' );
+
+        //Au changement de date de début on adapte la date de fin
+        document.querySelector( '#eventStart' ).addEventListener( 'change', this.adaptDateEnd.bind( this ) );
     }
 
 
@@ -312,7 +295,6 @@ class App {
         //  header
         const popup_header = document.createElement( 'div' );
         popup_header.classList.add( 'popup_header' );
-        console.log('new');
 
         //  alerte
         if ( alert_msg !== '' ){
@@ -630,6 +612,79 @@ class App {
                 target.click();
             });
         }
+    }
+
+    /**
+     * Delete inputs date end if checkbox checked, add it back if unchecked
+     * @param event
+     */
+    checkboxEvent( event ) {
+        const target = event.target;
+
+        if (target.checked) {
+            document.querySelector( '#dateEnd' ).remove();
+        }
+        else {
+            //Création de l'input date
+            const inp_end = document.createElement( 'input' );
+            inp_end.type = 'datetime-local';
+            inp_end.name = 'event_end';
+            inp_end.id = 'eventEnd';
+            inp_end.required = true;
+
+            //Création du label
+            const label_end = document.createElement( 'label' );
+            label_end.for = 'eventEnd';
+            label_end.textContent = 'Date de fin';
+
+            //Création de la div (input + label)
+            const div_end = document.createElement( 'div' );
+            div_end.classList.add( 'input' );
+            div_end.id = 'dateEnd';
+            div_end.append( label_end, inp_end );
+
+            //Ajout de la div
+            document.querySelector( '#datesForm' ).append( div_end );
+
+            //Utilisation de flatpickr sur le champ
+            this.dateFlatpickr( '#eventEnd' );
+        }
+    }
+
+    /**
+     * Use flatpickr lib for the inputs date
+     * @param selector
+     * @param minDate
+     * @param defaultDate
+     */
+    dateFlatpickr( selector, minDate = 'today', defaultDate = '' ) {
+        let date_conf = {
+            locale: French,
+            enableTime: true,
+            time_24hr: true,
+            altInput: true,
+            dateFormat: "Y-m-d H:i",
+            altFormat: "l j F Y H:i",
+            minDate: minDate,
+            defaultDate: defaultDate
+        };
+
+        flatpickr( selector, date_conf );
+    }
+
+    /**
+     * Change the value of date end input according to date start input value
+     * @param event
+     */
+    adaptDateEnd( event ) {
+        //String date de début
+        const date_start = event.target.value;
+
+        //Date de début + 30min pour date de fin par défaut
+        const date_end_def = new Date( date_start );
+        date_end_def.setTime( date_end_def.getTime() + ( 30 * 60 * 1000 ) )
+
+        this.dateFlatpickr( '#eventEnd', date_start, date_end_def.getTime() )
     }
 }
 

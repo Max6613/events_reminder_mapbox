@@ -29,6 +29,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
+    "flatpickr": "^4.6.6",
     "mapbox-gl": "^1.12.0"
   }
 }
