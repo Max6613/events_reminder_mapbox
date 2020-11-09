@@ -112,8 +112,7 @@ class App {
         allDayCheck.addEventListener( 'change', function ( event ) {
 
             if (this.checked) {
-                const div_end = document.querySelector( '#eventEnd' ).parentNode;
-                form.removeChild( div_end );
+                document.querySelector( '#dateEnd' ).remove();
             }
             else {
                 //Création de l'input date
@@ -134,7 +133,8 @@ class App {
                 div_end.id = 'dateEnd';
                 div_end.append( label_end, inp_end );
 
-                form.insertBefore( div_end,  document.querySelector( '#latitude' ) );
+                //Ajout de la div
+                document.querySelector( '#datesForm' ).append( div_end );
             }
         });
 
@@ -615,7 +615,7 @@ class App {
             target.classList.add( 'cancel' );
             target.textContent = 'Annuler';
 
-            //Ajout des coordonnées du click aux imputs
+            //Ajout des coordonnées du click aux inputs
             this.map.on( 'click', function (event) {
                 const pos = event.lngLat;
 
@@ -625,7 +625,6 @@ class App {
                 //On déclenche un evenement click sur le meme bouton pour revenir à l'état d'origine
                 target.click();
             });
-
         }
     }
 }
