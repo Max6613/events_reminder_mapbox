@@ -252,6 +252,9 @@ class App {
         let alert_msg = '';
 
         const days_left = this.numberDaysLeft( reminder.date_start );
+        const time_left_str = this.timeLeftStr( days_left );
+
+        console.log( days_left); //TODO delete
 
         //evenement passé => rouge
         if ( days_left < 0 ) {
@@ -263,7 +266,7 @@ class App {
         else if ( days_left <= 3 ) {
             color = '#dd9e00';
             marker_class = 'orange';
-            alert_msg = 'Attention, commence ' + this.timeLeftStr( days_left ).toLowerCase();
+            alert_msg = 'Attention, commence ' + time_left_str.toLowerCase();
         }
 
         /* --------------------
@@ -370,10 +373,6 @@ class App {
            </div>
         </div>
         */
-        // message en fonction du temps restant
-        //    time_left = [days, hours, minutes]
-        const time_left = this.timeLeftArray( days_left );
-        const time_left_str = this.timeLeftStr( time_left[ 0 ] );
 
         // temps restant
         const popup_time_left = document.createElement( 'em' );
@@ -612,20 +611,6 @@ class App {
             } );
         }
     }
-
-
-    getPosOnClick( event ) {
-        console.log("cliiiick");
-        const pos = event.lngLat;
-
-        document.querySelector( '#eventLng' ).value = pos.lng.toFixed( 7 );
-        document.querySelector( '#eventLat' ).value = pos.lat.toFixed( 7 );
-
-        //On déclenche un evenement click sur le meme bouton pour revenir à l'état d'origine
-        target.click();
-        event.stopPropagation();
-    }
-
 
 
     /**
