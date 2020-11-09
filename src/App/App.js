@@ -79,8 +79,8 @@ class App {
         --- personnalisés ---
         ------------------ */
         //Bouton d'actualisation
-        const updateBtn = new UpdateButtonControl();
-        this.map.addControl(updateBtn, 'top-left');
+        const update_btn = new UpdateButtonControl();
+        this.map.addControl(update_btn, 'top-left');
 
         //Filtres
         const filters = new FiltersControl();
@@ -108,8 +108,8 @@ class App {
         ------ Checkbox ------
         --- journée entière --
         ------------------- */
-        const allDayCheck = document.querySelector( '#eventAllDay' );
-        allDayCheck.addEventListener( 'change', this.checkboxEvent.bind( this ) );
+        const all_day_check = document.querySelector( '#eventAllDay' );
+        all_day_check.addEventListener( 'change', this.checkboxEvent.bind( this ) );
 
         /* ----------------
         --- Suppression ---
@@ -122,8 +122,8 @@ class App {
         --- Sélection position ---
         ------ sur la carte ------
         ----------------------- */
-        const selectPos = document.querySelector( '#selectPos' );
-        selectPos.addEventListener( 'click', this.selectPosOnMap.bind( this ) );
+        const select_pos = document.querySelector( '#selectPos' );
+        select_pos.addEventListener( 'click', this.selectPosOnMap.bind( this ) );
 
         /* --------------------
         ------- Bonus 2 -------
@@ -559,10 +559,9 @@ class App {
      * @param event
      */
     selectPosOnMap( event ) {
-
         const target = event.target;
 
-//Passage en mode d'entrée de la position par l'utilisateur
+        //Passage en mode d'entrée de la position par l'utilisateur
         if ( target.classList.contains( 'cancel' ) ) {
             //Réactivation des champs input
             const pos_inputs = [ document.querySelector( '#eventLat' ), document.querySelector( '#eventLng' ) ]
@@ -579,7 +578,6 @@ class App {
             target.classList.remove( 'cancel' );
             target.textContent = 'Choisir sur la carte';
 
-            this.map.on( 'click', null );
         }
         //Passage en mode de sélection de la position sur la carte
         else {
@@ -601,8 +599,9 @@ class App {
             target.classList.add( 'cancel' );
             target.textContent = 'Annuler';
 
-            //Ajout des coordonnées du click aux inputs
-            this.map.on( 'click', function (event) {
+            //Ajout des coordonnées du clic aux inputs
+            this.map.once( 'click', function (event) {
+                console.log("cliiiick");
                 const pos = event.lngLat;
 
                 document.querySelector( '#eventLng' ).value = pos.lng.toFixed( 7 );
@@ -610,9 +609,24 @@ class App {
 
                 //On déclenche un evenement click sur le meme bouton pour revenir à l'état d'origine
                 target.click();
-            });
+            } );
         }
     }
+
+
+    getPosOnClick( event ) {
+        console.log("cliiiick");
+        const pos = event.lngLat;
+
+        document.querySelector( '#eventLng' ).value = pos.lng.toFixed( 7 );
+        document.querySelector( '#eventLat' ).value = pos.lat.toFixed( 7 );
+
+        //On déclenche un evenement click sur le meme bouton pour revenir à l'état d'origine
+        target.click();
+        event.stopPropagation();
+    }
+
+
 
     /**
      * Delete inputs date end if checkbox checked, add it back if unchecked
@@ -651,6 +665,7 @@ class App {
         }
     }
 
+
     /**
      * Use flatpickr lib for the inputs date
      * @param selector
@@ -671,6 +686,7 @@ class App {
 
         flatpickr( selector, date_conf );
     }
+
 
     /**
      * Change the value of date end input according to date start input value
