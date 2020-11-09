@@ -291,10 +291,7 @@ class App {
         <div class="popup_click">
             <div class="popup_header">
                 <div class="popup_alert">Message en fonction du nb de jours restant</div>
-                <div class="popup_title">
-                    <h4>Titre de la popup</h4>
-                    <em>Dans X jours/heures/minutes</em>
-                </div>
+                <h4>Titre de la popup</h4>
             </div>
 
             <div class="popup_desc">Description</div>
@@ -311,26 +308,26 @@ class App {
         </div>
         */
 
-        //Création de la popup (pour le click)
-        const popup_click = new mapboxgl.Popup({
-            closeOnMove: true,
-            maxWidth: '300px'
-        });
-
         // Contenu de la popup
+        //  header
+        const popup_header = document.createElement( 'div' );
+        popup_header.classList.add( 'popup_header' );
+        console.log('new');
+
         //  alerte
-        const popup_alert = document.createElement( 'div' );
-        popup_alert.classList.add( 'popup_alert' );
-        popup_alert.textContent = alert_msg;
+        if ( alert_msg !== '' ){
+            const popup_alert = document.createElement( 'div' );
+            popup_alert.classList.add( 'popup_alert' );
+            popup_alert.textContent = alert_msg;
+
+            popup_header.append( popup_alert );
+        }
 
         //  titre
         const popup_title = document.createElement( 'h4' );
         popup_title.textContent = reminder.title;
 
-        //  header
-        const popup_header = document.createElement( 'div' );
-        popup_header.classList.add( 'popup_header' );
-        popup_header.append( popup_alert, popup_title );
+        popup_header.append( popup_title );
 
         //  description
         const popup_desc = document.createElement( 'div' );
@@ -369,6 +366,11 @@ class App {
         popup_div_content.classList.add( 'popup_click' );
         popup_div_content.append( popup_header, popup_desc, popup_dates, popup_pos );
 
+        //Création de la popup (pour le click)
+        const popup_click = new mapboxgl.Popup({
+            closeOnMove: true,
+            maxWidth: '300px'
+        });
         popup_click.setDOMContent( popup_div_content );
 
         /* POPUP AU HOVER
@@ -387,25 +389,27 @@ class App {
         </div>
         */
         // message en fonction du temps restant
-        this.timeLeftArray(2.9532);
-
-        const time_left = this.timeLeftStr( days_left );
+        //    time_left = [days, hours, minutes]
+        const time_left = this.timeLeftArray( days_left );
+        const time_left_str = this.timeLeftStr( time_left[ 0 ] );
 
         // temps restant
         const popup_time_left = document.createElement( 'em' );
-        popup_time_left.textContent = time_left;
+        popup_time_left.textContent = time_left_str;
+
+        const popup_title_clone = popup_title.cloneNode( true );
 
         // titre div (titre + temps restant)
         const popup_title_div = document.createElement( 'div' );
         popup_title_div.classList.add( 'popup_title' );
-        popup_title_div.append( popup_title, popup_time_left );
+        popup_title_div.append( popup_title_clone, popup_time_left );
 
         const popup_hover = document.createElement( 'div' );
         popup_hover.classList.add( 'popup_hover' );
         popup_hover.append( popup_title_div, popup_dates )
 
         // Ajout d'un Marker
-        let marker = new mapboxgl.Marker( {color: color, title: popup_title} );
+        let marker = new mapboxgl.Marker( {color: color, title: reminder.title} );
 
         marker
             .setLngLat([ reminder.longitude, reminder.latitude ] )
